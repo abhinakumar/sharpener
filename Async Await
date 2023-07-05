@@ -1,0 +1,114 @@
+const blogs = [];
+
+function createPost(title) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            blogs.push({ title });
+            resolve({ title });
+        }, 1000);
+    });
+}
+
+function updateLastUserActivityTime() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const lastActivityTime = new Date();
+            resolve(lastActivityTime);
+        }, 1000);
+    });
+}
+
+function deleteLastPost() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (blogs.length === 0) {
+                reject(new Error("No post to delete."));
+            } else {
+                const deletedPost = blogs.pop();
+                resolve(deletedPost);
+            }
+        }, 1000);
+    });
+}
+
+function getColdDrinks() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve("Got cold drinks.");
+        }, 2000);
+    });
+}
+
+async function createAndDeletePostAsyncAwait(title) {
+    try {
+        const post = await createPost(title);
+        console.log(`Post created: ${post.title}`);
+
+        const lastActivityTime = await updateLastUserActivityTime();
+        console.log(`Last Activity Time: ${lastActivityTime}`);
+
+        const deletedPost = await deleteLastPost();
+        console.log(`Deleted post: ${deletedPost.title}`);
+
+        console.log("Current set of Posts:", blogs);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+function createAndDeletePostPromise(title) {
+    createPost(title)
+        .then((post) => {
+            console.log(`Post created: ${post.title}`);
+            return updateLastUserActivityTime();
+        })
+        .then((lastActivityTime) => {
+            console.log(`Last Activity Time: ${lastActivityTime}`);
+            return deleteLastPost();
+        })
+        .then((deletedPost) => {
+            console.log(`Deleted post: ${deletedPost.title}`);
+            console.log("Current set of Posts:", blogs);
+        })
+        .catch((error) => {
+            console.error(error.message);
+        });
+}
+
+async function main() {
+    // Using async/await
+    await createAndDeletePostAsyncAwait("Post1");
+    await createAndDeletePostAsyncAwait("Post2");
+    await createAndDeletePostAsyncAwait("Post3");
+
+    // Using promises
+    createAndDeletePostPromise("Post4");
+    createAndDeletePostPromise("Post5");
+    createAndDeletePostPromise("Post6");
+
+    // Using Promise.all with async/await
+    try {
+        const [post7, post8, post9] = await Promise.all([
+            createPost("Post7"),
+            createPost("Post8"),
+            createPost("Post9"),
+        ]);
+
+        console.log(`Posts created: ${post7.title}, ${post8.title}, ${post9.title}`);
+
+        const lastActivityTime = await updateLastUserActivityTime();
+        console.log(`Last Activity Time: ${lastActivityTime}`);
+
+        await getColdDrinks();
+        console.log("Got cold drinks.");
+
+        const deletedPost = await deleteLastPost();
+        console.log(`Deleted post: ${deletedPost.title}`);
+
+        console.log("Current set of Posts:", blogs);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+main();
